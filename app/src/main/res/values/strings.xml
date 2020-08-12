@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name">UrlShortener</string>
+    <string name="get_url">Get all URLs</string>
+    <string name="one_url">Get My URL handle</string>
+    <string name="nav_open">open</string>
+    <string name="nav_close">Close</string>
+</resources>
