@@ -10,15 +10,17 @@
 
     <EditText
         android:id="@+id/shortString"
-        android:hint="  Handle"
+        android:hint="Handle"
         android:layout_margin="10dp"
+        android:paddingLeft="15dp"
         android:background="@drawable/shape"
         android:layout_width="match_parent"
         android:layout_height="50dp" />
 
     <EditText
         android:id="@+id/expansionString"
-        android:hint="  Actual URL"
+        android:hint="Actual URL"
+        android:padding="15dp"
         android:background="@drawable/shape"
         android:layout_margin="10dp"
         android:layout_width="match_parent"

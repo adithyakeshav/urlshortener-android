@@ -16,26 +16,12 @@ import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.keshava.urlshortener.utils.Constants.*;
+import static com.keshava.urlshortener.constants.Constants.*;
 
 public class ServerUtility {
-    private final String TAG = "ApiUtils";
-    private Context context;
+    private static final String TAG = "ApiUtils";
 
-    public ServerUtility( Context context) {
-        this.context = context;
-    }
-
-    public JSONObject createShortenApiJsonObject(String shortString, String expansionString) throws JSONException {
-        JSONObject jsonObject = new JSONObject();
-
-        jsonObject.put(SHORT_STRING, shortString);
-        jsonObject.put(EXPANSION_STRING, expansionString);
-
-        return jsonObject;
-    }
-
-    public void callApiPost(final String url, JSONObject jsonObject) {
+    public static void callApiPost(Context context, final String url, JSONObject jsonObject, final ServerResponseCallback serverResponseCallback) {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
         Log.e(TAG, "callApiPost: " + DOMAIN_URL + url );
@@ -48,13 +34,14 @@ public class ServerUtility {
                     @Override
                     public void onResponse(JSONObject response) {
                         Log.e(TAG, "onResponse: " + response.toString() );
-                        handleResponse(url, response);
+                        serverResponseCallback.onJSONObjectResponse(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(TAG, "onErrorResponse: ERROR ! " + error.getMessage() );
+                        serverResponseCallback.onErrorResponse(error);
                     }
                 }
 
@@ -63,12 +50,12 @@ public class ServerUtility {
         requestQueue.add(jsonObjectRequest);
     }
 
-    public void callApiGet(final String url) {
+    public static void callApiGet( Context context, final String url, final ServerResponseCallback serverResponseCallback) {
         RequestQueue requestQueue = Volley.newRequestQueue(context);
 
         Log.e(TAG, "callApiGet: " + DOMAIN_URL + url );
 
-        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(
+        JsonArrayRequest jsonArrayRequest = new JsonArrayRequest(
                 Request.Method.GET,
                 DOMAIN_URL + url,
                 null,
@@ -76,38 +63,39 @@ public class ServerUtility {
                     @Override
                     public void onResponse(JSONArray response) {
                         Log.e(TAG, "onResponse: " + response.toString() );
-                        handleArrayResponse(url, response);
+                        serverResponseCallback.onJSONArrayResponse(response);
                     }
                 },
                 new Response.ErrorListener() {
                     @Override
                     public void onErrorResponse(VolleyError error) {
                         Log.e(TAG, "onErrorResponse: ERROR ! " + error.getMessage() );
+                        serverResponseCallback.onErrorResponse(error);
                     }
                 }
         );
-        requestQueue.add(jsonObjectRequest);
+        requestQueue.add(jsonArrayRequest);
     }
-
-    public void handleResponse(String url, JSONObject jsonResponse ) {
-        switch (url) {
-            case SHORTEN_URL:
-                Toast.makeText(context, "Shorten URL Success!", Toast.LENGTH_SHORT).show();
-                break;
-            case GET_ALL_URL:
-                Toast.makeText(context, "URLs retrieved", Toast.LENGTH_SHORT).show();
-        }
-    }
-
-    public void handleArrayResponse(String url, JSONArray jsonArrayResponse ) {
-        Log.e(TAG, "handleArrayResponse: " + url );
-        switch (url) {
-            case SHORTEN_URL:
-                Toast.makeText(context, "Shorten URL Success!", Toast.LENGTH_SHORT).show();
-                break;
-            case GET_ALL_URL:
-                Toast.makeText(context, "URLs retrieved", Toast.LENGTH_SHORT).show();
-        }
-    }
+//
+//    public void handleResponse(String url, JSONObject jsonResponse ) {
+//        switch (url) {
+//            case SHORTEN_URL:
+//                Toast.makeText(context, "Shorten URL Success!", Toast.LENGTH_SHORT).show();
+//                break;
+//            case GET_ALL_URL:
+//                Toast.makeText(context, "URLs retrieved", Toast.LENGTH_SHORT).show();
+//        }
+//    }
+//
+//    public void handleArrayResponse(String url, JSONArray jsonArrayResponse ) {
+//        Log.e(TAG, "handleArrayResponse: " + url );
+//        switch (url) {
+//            case SHORTEN_URL:
+//                Toast.makeText(context, "Shorten URL Success!", Toast.LENGTH_SHORT).show();
+//                break;
+//            case GET_ALL_URL:
+//                Toast.makeText(context, "URLs retrieved", Toast.LENGTH_SHORT).show();
+//        }
+//    }
 
 }

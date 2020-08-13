@@ -8,12 +8,17 @@ import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
+
+import com.keshava.urlshortener.utils.JSONUtil;
+import com.keshava.urlshortener.utils.ServerResponseCallback;
 import com.keshava.urlshortener.utils.ServerUtility;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import static com.keshava.urlshortener.utils.Constants.*;
+import static com.keshava.urlshortener.constants.Constants.*;
 
 public class MainActivity2 extends AppCompatActivity {
 
@@ -34,10 +39,9 @@ public class MainActivity2 extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 JSONObject jsonObject = null;
-                ServerUtility serverUtility = new ServerUtility(MainActivity2.this);
                 Log.e(TAG, "onClick: " + "Button Clicked" );
                 try {
-                    jsonObject = serverUtility.createShortenApiJsonObject(
+                    jsonObject = JSONUtil.createShortenApiJsonObject(
                             shortString.getText().toString(),
                             expansionString.getText().toString());
                     Log.e(TAG, "JSON Created: " + jsonObject.toString() );
@@ -46,16 +50,44 @@ public class MainActivity2 extends AppCompatActivity {
                     Log.e(TAG, "onClick: " + exception.getMessage() );
                 }
 
-                serverUtility.callApiPost(SHORTEN_URL, jsonObject);
+                ServerUtility.callApiPost(MainActivity2.this, SHORTEN_URL, jsonObject, new ServerResponseCallback() {
+                    @Override
+                    public void onJSONObjectResponse(JSONObject jsonObject) {
+                        Log.e(TAG, "onJSONObjectResponse: " + jsonObject.toString() );
+
+                        if (jsonObject.has(SHORT_STRING)) {
+                            Toast.makeText(MainActivity2.this, "URL Shortened! Success", Toast.LENGTH_SHORT).show();
+                            startActivity(new Intent(MainActivity2.this, MainActivity.class));
+                            finish();
+                        } else {
+                            try {
+                                Toast.makeText(MainActivity2.this, jsonObject.getString(ERROR_RESPONSE) , Toast.LENGTH_SHORT).show();
+                            } catch (JSONException e) {
+                                Log.e(TAG, "onJSONObjectResponse: ", e );
+                                Toast.makeText(MainActivity2.this, "Unknown Error", Toast.LENGTH_SHORT).show();
+                            }
+
+                        }
+                    }
+
+                    @Override
+                    public void onJSONArrayResponse(JSONArray jsonArray) {
+
+                    }
+
+                    @Override
+                    public void onErrorResponse(Exception e) {
+
+                    }
+                });
             }
         });
 
         findViewById(R.id.backbutton).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                new ServerUtility(MainActivity2.this).callApiGet(GET_ALL_URL);
-//                startActivity(new Intent(MainActivity2.this, MainActivity.class));
-//                finish();
+                startActivity(new Intent(MainActivity2.this, MainActivity.class));
+                finish();
             }
         });
 
