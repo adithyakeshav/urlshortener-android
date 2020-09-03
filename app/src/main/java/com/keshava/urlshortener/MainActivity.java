@@ -15,6 +15,8 @@ import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Toast;
 
@@ -31,6 +33,7 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
+import static com.keshava.urlshortener.constants.Constants.DOMAIN_URL;
 import static com.keshava.urlshortener.constants.Constants.ERROR_RESPONSE;
 import static com.keshava.urlshortener.constants.Constants.EXPANSION_STRING;
 import static com.keshava.urlshortener.constants.Constants.GET_ALL_URL;
